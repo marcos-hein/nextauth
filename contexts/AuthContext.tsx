@@ -1,6 +1,7 @@
 import Router from "next/router";
 import { setCookie, parseCookies, destroyCookie } from "nookies";
 import { createContext, ReactNode, useEffect, useState } from "react";
+import { setupAPIClient } from "../services/api";
 import { api } from "../services/apiClient";
 
 type User = {
@@ -43,7 +44,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (token) {
       api
         .get("/me")
-        .then(response => {
+        .then((response) => {
           const { email, permissions, roles } = response.data;
 
           setUser({ email, permissions, roles });
