@@ -33,7 +33,7 @@ export function setupAPIClient(ctx = undefined) {
               .post("/refresh", {
                 refreshToken,
               })
-              .then((response) => {
+              .then(response => {
                 const { token } = response.data;
 
                 setCookie(ctx, "nextauth.token", token, {
@@ -41,27 +41,18 @@ export function setupAPIClient(ctx = undefined) {
                   path: "/",
                 });
 
-                setCookie(
-                  ctx,
-                  "nextauth.refreshToken",
-                  response?.data.refreshToken,
-                  {
-                    maxAge: 60 * 60 * 24 * 30, // 30 days
-                    path: "/",
-                  }
-                );
+                setCookie(ctx, "nextauth.refreshToken", response?.data.refreshToken, {
+                  maxAge: 60 * 60 * 24 * 30, // 30 days
+                  path: "/",
+                });
 
                 api.defaults.headers["Authorization"] = `Bearer ${token}`;
 
-                failedRequestsQueue.forEach((request) =>
-                  request.onSuccess(token)
-                );
+                failedRequestsQueue?.forEach(request => request.onSuccess(token));
                 failedRequestsQueue = [];
               })
-              .catch((err) => {
-                failedRequestsQueue.forEach((request) =>
-                  request.onFailure(err)
-                );
+              .catch(err => {
+                failedRequestsQueue?.forEach(request => request.onFailure(err));
                 failedRequestsQueue = [];
               })
               .finally(() => {
@@ -90,7 +81,7 @@ export function setupAPIClient(ctx = undefined) {
         }
       }
       return Promise.reject(error);
-    }
+    },
   );
 
   return api;
