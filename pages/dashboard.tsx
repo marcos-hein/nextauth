@@ -1,7 +1,6 @@
 import { destroyCookie } from "nookies";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "../contexts/AuthContext";
-import { UseCan } from "../hooks/useCan";
 import { setupAPIClient } from "../services/api";
 import { api } from "../services/apiClient";
 import { withSSRAuth } from "../utils/withSSRAuth";
@@ -9,26 +8,17 @@ import { withSSRAuth } from "../utils/withSSRAuth";
 export default function Dashboard() {
   const { user } = useContext(AuthContext);
 
-  const userCanSeeMetrics = UseCan({
-    roles: ["administrator", "editor"],
-  });
-
   useEffect(() => {
     api
       .get("me")
-      .then(response => console.log(response))
-      .catch(error => console.log(error));
+      .then((response) => console.log(response))
+      .catch((error) => console.log(error));
   }, []);
 
-  return (
-    <>
-      <h1>Dash:{user?.email}</h1>
-      {userCanSeeMetrics && <div>Métricas</div>}
-    </>
-  );
+  return <h1>Dash:{user?.email}</h1>;
 }
 
-export const getServerSideProps = withSSRAuth(async ctx => {
+export const getServerSideProps = withSSRAuth(async (ctx) => {
   const apiClient = setupAPIClient(ctx);
   const response = await apiClient.get("/me");
 
